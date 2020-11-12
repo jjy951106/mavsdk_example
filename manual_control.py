@@ -13,7 +13,7 @@ async def manual_controls():
     drone = System()
     await drone.connect(system_address="udp://:14540")
     
-    dkc = drone_key_control()
+    dkc = Drone_keyboard_control(0.5, 0.5, 0.7, 0.3, 0.5)
 
     # This waits till a mavlink based drone is connected
     async for state in drone.core.connection_state():

@@ -102,8 +102,12 @@ async def manual_controls():
     # Arming the drone
     print("-- Arming")
     await drone.action.arm()
+
+    # Takeoff the vehicle
+    print("-- Taking off")
+    await drone.action.takeoff()
     
-    await asyncio.sleep(1)
+    await asyncio.sleep(10)
 
     # set the manual control input after arming
     await drone.manual_control.set_manual_control_input(
@@ -136,9 +140,7 @@ class ControlWindow(QDialog):
         uic.loadUi(control_ui, self)
         self.show()
         
-        key = threading.Thread(target = drone_keyboard).start()
-        key.daemon = True
-        key.start()
+        threading.Thread(target = drone_keyboard).start()
         print("Input keyboard")       
         loop = asyncio.get_event_loop() 
         loop.run_until_complete(manual_controls())

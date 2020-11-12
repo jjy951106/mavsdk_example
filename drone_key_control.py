@@ -3,7 +3,7 @@ from pynput import keyboard
 import threading
 import time
 
-class drone_key_control(threading.Thread):
+class Drone_keyboard_control(threading.Thread):
     
     # get current state of roll axis (between -1 and 1)
     roll = float(0)
@@ -13,8 +13,27 @@ class drone_key_control(threading.Thread):
     throttle = float(0.5)
     # get current state of yaw axis (between -1 and 1)
     yaw = float(0)
-    # if stop is True, Thread is stop
-    stop = False
+    
+    roll_Max = float(1)
+    pitch_Max = float(1)
+    throttle_up_Max = float(1)
+    throttle_down_Max = float(0)
+    yaw_Max = float(1)
+    
+    def __init__(
+        self,
+        roll_Max,
+        pitch_Max,
+        throttle_up_Max,
+        throttle_down_Max,
+        yaw_Max
+    ):
+        threading.Thread.__init__(self)
+        self.roll_Max = roll_Max
+        self.pitch_Max = pitch_Max
+        self.throttle_up_Max = throttle_up_Max
+        self.throttle_down_Max = throttle_down_Max
+        self.yaw_Max = yaw_Max
     
     def run(self):
         with keyboard.Listener( on_press = self.on_press, 
@@ -27,22 +46,22 @@ class drone_key_control(threading.Thread):
     def on_press(self, key):
         
         if key == keyboard.Key.left:
-            self.roll = float(-0.7)
+            self.roll = -self.roll_Max
         if key == keyboard.Key.right:
-            self.roll = float(0.7)
+            self.roll = self.roll_Max
         if key == keyboard.Key.up:
-            self.pitch = float(0.7)
+            self.pitch = self.pitch_Max
         if key == keyboard.Key.down:
-            self.pitch = float(-0.7)
+            self.pitch = -self.pitch_Max
 
         if key == keyboard.KeyCode.from_char('w'):
-            self.throttle = float(0.8)
+            self.throttle = self.throttle_up_Max
         if key == keyboard.KeyCode.from_char('s'):
-            self.throttle = float(0.2)
+            self.throttle = self.throttle_down_Max
         if key == keyboard.KeyCode.from_char('a'):
-            self.yaw = float(-0.7)
+            self.yaw = -self.yaw_Max
         if key == keyboard.KeyCode.from_char('d'):
-            self.yaw = float(0.7)    
+            self.yaw = self.yaw_Max  
 
         print('Key %s pressed' % key) 
         
@@ -67,7 +86,7 @@ class drone_key_control(threading.Thread):
             self.yaw = float(0)  
 
         print('Key %s released' %key) 
-        if key == keyboard.Key.esc or self.stop == True: # esc 키가 입력되면 종료 
+        if key == keyboard.Key.esc: # esc 키가 입력되면 종료 
             return False
         
     def __get__(self, out):
