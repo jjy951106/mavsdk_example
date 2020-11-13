@@ -2,6 +2,7 @@
 from drone_key_control import *
 import threading
 import asyncio
+from level.beginner import *
 from mavsdk import System
 from mavsdk import telemetry
 from mavsdk.telemetry import FlightMode
@@ -13,7 +14,7 @@ async def manual_controls():
     drone = System()
     await drone.connect(system_address="udp://:14540")
     
-    dkc = Drone_keyboard_control(0.5, 0.5, 0.7, 0.3, 0.5)
+    dkc = Drone_keyboard_control(0.8, 0.8, 0.8, 0.2, 0.8)
 
     # This waits till a mavlink based drone is connected
     async for state in drone.core.connection_state():
@@ -26,6 +27,10 @@ async def manual_controls():
         if global_lock.is_global_position_ok:
             print("-- Global position state is ok")
             break
+        
+    await Beginner(drone).param_set()
+    
+    await Beginner(drone).param_get()
 
     # set the manual control input after arming
     await drone.manual_control.set_manual_control_input(
