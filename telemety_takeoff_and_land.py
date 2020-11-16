@@ -32,11 +32,11 @@ async def run():
             break
 
     # Start parallel tasks
-    print_altitude_task = asyncio.ensure_future(print_altitude(drone))
-    print_flight_mode_task = asyncio.ensure_future(print_flight_mode(drone))
+    print_altitude_task = asyncio.create_task(print_altitude(drone))
+    print_flight_mode_task = asyncio.create_task(print_flight_mode(drone))
 
     running_tasks = [print_altitude_task, print_flight_mode_task]
-    termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
+    termination_task = asyncio.create_task(observe_is_in_air(drone, running_tasks))
 
     # Execute the maneuvers
     print("-- Arming")
@@ -62,7 +62,7 @@ async def run():
 
     # Wait until the drone is landed (instead of exiting after 'land' is sent)
     await termination_task
-
+    
 
 async def print_altitude(drone):
     """ Prints the altitude when it changes """
@@ -81,10 +81,10 @@ async def print_flight_mode(drone):
 
     previous_flight_mode = None
 
-    async for flight_mode in drone.telemetry.flight_mode():
-        if flight_mode is not previous_flight_mode:
-            previous_flight_mode = flight_mode
-            print(f"Flight mode: {flight_mode}")
+    async for ground_truth in drone.telemetry.ground_truth():
+        if ground_truth is not previous_ground_truth:
+            previous_ground_truth = ground_truth
+            print(f"ground_truth: {ground_truth}")
 
 
 async def observe_is_in_air(drone, running_tasks):
