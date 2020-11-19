@@ -4,7 +4,13 @@ import threading
 import asyncio
 from mavsdk import System
 from mavsdk import telemetry
+from dronekit import connect, VehicleMode
 
+def mode_change(mode):
+
+    vehicle = connect('127.0.0.1:14540', wait_ready=True)
+    
+    vehicle.mode = VehicleMode(mode)
 
 async def main():
     
@@ -26,7 +32,7 @@ async def main():
             break
         
     control = asyncio.create_task(manual_controls(drone))
-    position = asyncio.create_task(print_position(drone))
+    # position = asyncio.create_task(print_position(drone))
     
     await control
     await position
@@ -56,12 +62,14 @@ async def manual_controls(drone):
     await drone.manual_control.start_position_control()
         
     dkc.start()
+    
+    mode_change('PosHold')
 
     while True:
 
         await drone.manual_control.set_manual_control_input(dkc.__get__('pitch'), dkc.__get__('roll')
                                                                 ,dkc.__get__('throttle'), dkc.__get__('yaw'))
-        await asyncio.sleep(0.1)
+        #await asyncio.sleep(0.1)
             
     dkc.stop()
         

@@ -3,7 +3,6 @@
 import asyncio
 from mavsdk import System
 
-
 async def run():
     """
     This is the "main" function.
@@ -51,9 +50,6 @@ async def run():
     await asyncio.sleep(5)
     
     print(await drone.action.get_takeoff_altitude())
-
-    print("-- Taking off")
-    await drone.action.takeoff()
 
     await asyncio.sleep(10)
 
