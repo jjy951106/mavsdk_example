@@ -85,41 +85,61 @@ class Drone_keyboard_control(threading.Thread):
         if key == keyboard.KeyCode.from_char('a'):
             self.yaw = float(0)
         if key == keyboard.KeyCode.from_char('d'):
-            self.yaw = float(0)  
+            self.yaw = float(0)
+        
+        if key == keyboard.KeyCode.from_char('1'):
+            self.roll_Max = float(0.2)
+            self.pitch_Max = float(0.2)
+            self.throttle_up_Max = float(0.6)
+            self.throttle_down_Max = float(0.3)
+            self.yaw_Max = float(0.6)
+            
+        if key == keyboard.KeyCode.from_char('2'):
+            self.roll_Max = float(0.4)
+            self.pitch_Max = float(0.4)
+            self.throttle_up_Max = float(0.7)
+            self.throttle_down_Max = float(0.2)
+            self.yaw_Max = float(0.7)
+        
+        if key == keyboard.KeyCode.from_char('3'):
+            self.roll_Max = float(0.6)
+            self.pitch_Max = float(0.6)
+            self.throttle_up_Max = float(0.8)
+            self.throttle_down_Max = float(0.2)
+            self.yaw_Max = float(0.6)
+        
+        if key == keyboard.KeyCode.from_char('4'):
+            self.roll_Max = float(0.8)
+            self.pitch_Max = float(0.8)
+            self.throttle_up_Max = float(0.8)
+            self.throttle_down_Max = float(0.1)
+            self.yaw_Max = float(0.8)
+             
+        if key == keyboard.KeyCode.from_char('5'):
+            self.roll_Max = float(1.0)
+            self.pitch_Max = float(1.0)
+            self.throttle_up_Max = float(1.0)
+            self.throttle_down_Max = float(0.0)
+            self.yaw_Max = float(1.0)
 
         print('Key %s released' %key) 
         if key == keyboard.Key.esc: # esc 키가 입력되면 종료
             self.drone_keyboard = False
             return False
         
-        if key == keyboard.Key.space: # esc 키가 입력되면 종료
+        if key == keyboard.Key.space: # space 키가 입력되면 종료
             self.drone_keyboard = False
             self.drone_space_kill = True
             return False
         
-        if key == keyboard.KeyCode.from_char('1'):
+        if key == keyboard.KeyCode.from_char('z'):
             self.drone_manual_level = 1
         
-        if key == keyboard.KeyCode.from_char('2'):
+        if key == keyboard.KeyCode.from_char('x'):
             self.drone_manual_level = 2
             
-        if key == keyboard.KeyCode.from_char('3'):
-            self.drone_manual_level = 3
-        
-        if key == keyboard.KeyCode.from_char('z'):
-            self.drone_mode = "HOLD"
-            
-        if key == keyboard.KeyCode.from_char('x'):
-            self.drone_mode = "POSTION"
-            
         if key == keyboard.KeyCode.from_char('c'):
-            self.drone_mode = "ALTHOLD"
-            
-        if key == keyboard.KeyCode.from_char('v'):
-            self.drone_mode = "MANUAL"
-            
-        if key == keyboard.KeyCode.from_char('l'):
-            self.drone_mode = "RTL"
+            self.drone_manual_level = 3
             
         if key == keyboard.KeyCode.from_char('t'):
             self.drone_mode = "TAKEOFF"

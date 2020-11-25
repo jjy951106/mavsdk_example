@@ -38,7 +38,7 @@ async def geofance(drone):
     await drone.param.set_param_int('GF_ACTION', 2)
     await drone.param.set_param_float('GF_MAX_VER_DIST', 5)
 """
-
+"""
 class Dronekit:
     
     vehicle = None
@@ -54,7 +54,7 @@ class Dronekit:
     def print_mode(self):
         
         print("Mode: %s" % self.vehicle.mode.name)
-        
+"""        
 
 async def main():
     
@@ -89,11 +89,11 @@ async def main():
     await termination_task
 
 async def manual_controls(drone):
-
-    await drone.param.set_param_int('NAV_RCL_ACT', 3)
+    
+    await asyncio.sleep(3)
     
     # 조종 값
-    dkc = Drone_keyboard_control(0.8, 0.8, 0.8, 0.2, 0.8)
+    dkc = Drone_keyboard_control(0.5, 0.5, 0.8, 0.2, 1.0)
 
     # set the manual control input after arming
     await drone.manual_control.set_manual_control_input(
@@ -108,6 +108,8 @@ async def manual_controls(drone):
             print(f"-- Arming")
             await drone.action.arm()
         break
+    
+    dkc.start()
         
     # set the manual control input after arming
     await drone.manual_control.set_manual_control_input(
@@ -117,14 +119,6 @@ async def manual_controls(drone):
     # start manual control
     print("-- Starting manual control")
     await drone.manual_control.start_position_control()
-        
-    dkc.start()
-    
-    D = Dronekit()
-    
-    D.connect()
-
-    D.mode("POSCTL")
 
     while dkc.drone_keyboard:
         await drone.manual_control.set_manual_control_input(dkc.__get__('pitch'), dkc.__get__('roll')
@@ -144,6 +138,7 @@ async def manual_controls(drone):
             await level(drone, 3)
             dkc.drone_manual_level = None
         
+        """
         # mode
         if dkc.drone_mode == "HOLD":
             D.mode("LOITER")
@@ -164,23 +159,18 @@ async def manual_controls(drone):
         elif dkc.drone_mode == "RTL":
             await drone.action.return_to_launch()
             dkc.drone_mode = None
+        """
             
-        elif dkc.drone_mode == "TAKEOFF":
+        if dkc.drone_mode == "TAKEOFF":
             await drone.action.takeoff()
             dkc.drone_mode = None
-            
+
+    await asyncio.sleep(1)
+
     if dkc.drone_space_kill:
         await drone.action.kill()
         
     else:
-        try:    
-            D.mode("LOITER")
-        except:
-            print("-- mode not change")
-            pass
-        
-        await asyncio.sleep(3)
-        
         try:
             await drone.action.land()
         except:
@@ -188,6 +178,9 @@ async def manual_controls(drone):
             pass
         
 async def param(drone):
+    
+    # LOSS LINK ACTION
+    await drone.param.set_param_int('NAV_RCL_ACT', 3)
     
     # TAKEOFF
     await drone.param.set_param_float('MIS_TAKEOFF_ALT', 2) # meter
@@ -210,23 +203,23 @@ async def level(drone, level):
         down = 1
         pitch = 80
         roll = 80
-        yaw = 80
+        yaw = 100
         
     if level == 2:
         degree = 40
-        up = 4
-        down = 2
+        up = 16
+        down = 8
         pitch = 150
         roll = 150
-        yaw = 150
+        yaw = 200
         
     if level == 3:
         degree = 50
-        up = 8
-        down = 4
+        up = 32
+        down = 16
         pitch = 220
         roll = 220
-        yaw = 220
+        yaw = 400
     
     await drone.param.set_param_float("MPC_MAN_TILT_MAX", degree)
     await drone.param.set_param_float("MPC_Z_VEL_MAX_UP", up)
